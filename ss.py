@@ -1,3 +1,5 @@
+# game config
+# 16:9, 1600*900
 import mss, pyautogui
 import pygetwindow as gw
 import time
@@ -46,14 +48,25 @@ def get_module_center_by_idx(idx, grid_cols=7):
     subscr_width = 139
     subscr_height = subscr_width
     # x,y in grid
-    grid_x,grid_y= idx%grid_cols,idx//grid_cols
-    subscr_top, subscr_left =  top+(grid_y*subscr_height), left+(grid_x*subscr_width)
-    center_top, center_left = subscr_top+(subscr_height//2), subscr_left+(subscr_width//2)
+    grid_col,grid_row= idx%grid_cols,idx//grid_cols
+
+    # row scrolls on 5, then for >5 clamp due to game auto scroll behaviour
+    offset_top=0
+    # clamp
+    if grid_row >= 4:
+        grid_row = 4
+        if grid_col != 0:
+            offset_top=-80
+        else:
+            offset_top=80
+
+    subscr_top, subscr_left = top+(grid_row*subscr_height), left+(grid_col*subscr_width)
+    center_top, center_left = subscr_top+(subscr_height//2)+offset_top, subscr_left+(subscr_width//2)
 
     return center_left, center_top
 
-for idx in range(20):
-    time.sleep(0.200)
+for idx in range(6002):
+    time.sleep(0.050)
     x,y = get_module_center_by_idx(idx)
     pyautogui.click(x, y)
     with mss.mss() as sct:
